@@ -21,8 +21,8 @@
 	#define ID_TEX_SIMON				0
 	#define FILEPATH_TEX_SIMON			L"Textures\\Simon1.png"
 
-	#define SIMON_BBOX_WIDTH			60
-	#define SIMON_BBOX_HEIGHT			64
+	#define SIMON_BBOX_WIDTH			17
+	#define SIMON_BBOX_HEIGHT			33
 
 	#define SIMON_WALKING_SPEED			0.1f
 	#define SIMON_JUMP_SPEED_Y			0.8f
@@ -33,11 +33,14 @@
 	#define SIMON_STATE_SITTING			200
 	#define SIMON_STATE_JUMPING			300
 
-	#define STAND		0
+	#define IDLE		0
 	#define WALK		1
-	#define SIT			2
+	#define DUCK		2
 	#define JUMP		3
-	#define HIT_STAND	4
-	#define HIT_SIT		5
+	#define STANDING	4
+	#define DUCKING		5
 
 
+	// Candle
+	#define ID_TEX_TORCH				1
+	#define FILEPATH_TEX_TORCH		L"Textures\\Item.png"

@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 
@@ -6,56 +6,73 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Textures.h"
-#include "Simon.h"
 #include "Define.h"
+#include "Simon.h"
+#include "Torch.h"
+
 
 
 Game* game;
-Simon* simon;
+Simon * simon;
+Torch* torch;
 
 class KeyHandler : public KeyEventHandler
 {
 	virtual void KeyState(BYTE* state)
 	{
-		if (game->IsKeyPress(DIK_SPACE))
-		{
-			if (simon->GetState() == JUMP || simon->GetState() == SIT)
-				return;
-			simon->SetState(JUMP);
-		}
-		else if (game->IsKeyDown(DIK_DOWN))
-		{
-			if (simon->GetState() == JUMP || simon->GetState() == WALK)
-				return;
-			simon->SetState(SIT);
-		}
-		else if (game->IsKeyDown(DIK_RIGHT))
-		{
-			if (simon->GetState() == JUMP)
-				return;
+		// nếu simon đang nhảy và chưa chạm đất, tiếp tục render trạng thái nhảy
+		if (simon->GetState() == JUMP && simon->IsStand() == false)
+			return;
 
+		// nếu simon đang quất roi và animation chưa được render hết thì tiếp tục render
+		if (simon->GetState() == STANDING && simon->animations[STANDING]->IsOver() == false)
+			return;
+
+		if (simon->GetState() == DUCKING && simon->animations[DUCKING]->IsOver() == false)
+			return;
+
+		if (game->IsKeyDown(DIK_RIGHT))
+		{
 			simon->nx = 1;
-
-			if (simon->GetState() != SIT)
-				simon->SetState(WALK);
+			simon->SetState(WALK);
 		}
 		else if (game->IsKeyDown(DIK_LEFT))
 		{
-			if (simon->GetState() == JUMP)
-				return;
-
 			simon->nx = -1;
-
-			if (simon->GetState() != SIT)
-				simon->SetState(WALK);
+			simon->SetState(WALK);
 		}
-		else simon->SetState(STAND);
+		else if (game->IsKeyDown(DIK_DOWN))
+		{
+			simon->SetState(DUCK);
+		}
+		else
+		{
+			simon->SetState(IDLE);
+		}
 	}
 
 	virtual void OnKeyDown(int KeyCode)
 	{
-		DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-
+		switch (KeyCode)
+		{
+		case DIK_SPACE:
+			simon->SetState(JUMP);
+			break;
+		case DIK_Z:
+			if (simon->GetState() == STANDING || simon->GetState() == DUCKING)
+				return;
+			if (simon->GetState() == IDLE || simon->GetState() == JUMP)
+			{
+				simon->SetState(STANDING);
+			}
+			else if (simon->GetState() == DUCK)
+			{
+				simon->SetState(DUCKING);
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	virtual void OnKeyUp(int KeyCode)
@@ -99,6 +116,7 @@ void Render()
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 
 		simon->Render();
+		torch->Render();
 
 		spriteHandler->End();
 		d3ddv->EndScene();
@@ -202,10 +220,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game->Init(hWnd);
 
 	simon = new Simon();
+	torch = new Torch();
 
 	keyHandler = new KeyHandler();
 	game->InitKeyboard(keyHandler);
+
 	simon->LoadResources();
+	torch->LoadResources();
 
 
 	Run();

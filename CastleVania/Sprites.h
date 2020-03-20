@@ -67,8 +67,12 @@ class Animation
 	int currentFrame;
 	vector<LPANIMATION_FRAME> frames;
 
+	bool isOverAnimation = false;
+
 public:
 	Animation(int defaultTime = 100);
+	bool IsOver() { return isOverAnimation; }
+	void Reset() { isOverAnimation = false; }
 
 	void Add(int spriteID, DWORD time = 0);
 	void Render(int nx, float x, float y, int alpha = 255);

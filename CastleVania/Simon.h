@@ -8,6 +8,8 @@ using namespace std;
 
 class Simon : public GameObject
 {
+	bool isStand = true;
+
 public:
 	Simon() : GameObject() {}
 
@@ -17,5 +19,7 @@ public:
 	void SetState(int state);
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+
+	bool IsStand();
 };
 

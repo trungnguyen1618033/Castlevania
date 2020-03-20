@@ -183,7 +183,7 @@ void Game::ProcessKeyboard()
 	}
 
 
-	keyHandler->KeyState((BYTE*)&keyStates);
+ 	keyHandler->KeyState((BYTE*)&keyStates);
 
 
 	// Collect all buffered events
